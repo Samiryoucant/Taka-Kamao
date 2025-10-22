@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuiXora 69 - Earn Money</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #FFA500;
+            --primary-light: #FFF9C4;
+            --text-dark: #FFFFFF;
+            --text-light: #CCCCCC;
+            --bg-dark: #121212;
+            --bg-card: #1E1E1E;
+            --bg-darker: #0A0A0A;
+            --border: #333333;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --neon-glow: 0 0 10px var(--primary), 0 0 20px var(--primary), 0 0 30px var(--primary);
+            --gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px var(--shadow);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Header with neon glow */
+        header {
+            background: var(--bg-darker);
+            color: var(--text-dark);
+            padding: 15px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+            box-shadow: var(--neon-glow);
+        }
+        
+        .app-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--primary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        
+        .user-details {
+            text-align: left;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .user-id {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* Balance cards with neon borders */
+        .balance-section {
+            background: var(--bg-card);
+            margin: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .balance-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 17px;
+            background: var(--gradient);
+            z-index: -1;
+            opacity: 0.7;
+        }
+        
+        .balance-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .balance-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--primary);
+        }
+        
+        .wallet-section {
+            background: var(--bg-card);
+            margin: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .wallet-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 17px;
+            background: var(--gradient);
+            z-index: -1;
+            opacity: 0.5;
+        }
+        
+        .wallet-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--primary);
+        }
+        
+        .wallet-info {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+        
+        /* Buttons with neon effects */
+        .btn {
+            background: var(--gradient);
+            color: var(--bg-dark);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px var(--shadow);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px var(--shadow), 0 0 15px var(--primary);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn:disabled:hover::before {
+            left: -100%;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #FF9800 0%, #EF6C00 100%);
+            color: white;
+        }
+        
+        /* Task cards with glow effects */
+        .tasks-section {
+            background: var(--bg-card);
+            margin: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .task-card {
+            background: rgba(255, 217, 0, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .task-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+        
+        .task-info h3 {
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .task-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .task-reward {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        /* Stats grid with animated counters */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px var(--shadow);
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px var(--shadow);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        /* Navigation bar with glow */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-darker);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -4px 15px var(--shadow);
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: 20px 20px 0 0;
+            z-index: 100;
+            border-top: 1px solid var(--primary);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            padding: 5px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 5px var(--primary);
+        }
+        
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        /* Screen management */
+        .screen {
+            display: none;
+            padding-bottom: 70px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* Referral section */
+        .referral-section {
+            background: var(--bg-card);
+            margin: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .referral-link-container {
+            background: rgba(255, 217, 0, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+        
+        .referral-link {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Withdraw form */
+        .withdraw-form {
+            background: var(--bg-card);
+            margin: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--text-light);
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+        
+        .note {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 217, 0, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .bonus-tasks {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .bonus-task {
+            background: rgba(255, 217, 0, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+        
+        .bonus-task:hover {
+            transform: scale(1.03);
+        }
+        
+        .bonus-task h3 {
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .bonus-reward {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: modalAppear 0.3s ease;
+            border: 1px solid var(--primary);
+        }
+        
+        @keyframes modalAppear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .close-btn {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            margin: 15px 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 5px var(--primary);
+        }
+        
+        /* Channel links */
+        .channel-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .channel-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+        
+        .channel-link:hover {
+            transform: translateY(-5px);
+        }
+        
+        .channel-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient);
+            margin-bottom: 5px;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+        }
+        
+        /* Verification steps */
+        .verification-steps {
+            margin: 15px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+        }
+        
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            background: #333;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .step.completed .step-icon {
+            background: var(--success);
+            color: white;
+        }
+        
+        .step.active .step-icon {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 5px var(--primary);
+        }
+        
+        .step-text {
+            flex: 1;
+            color: var(--text-light);
+        }
+        
+        .step.completed .step-text {
+            color: var(--success);
+        }
+        
+        .step.active .step-text {
+            color: var(--primary);
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: var(--success);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.error {
+            background: var(--danger);
+        }
+        
+        .toast.warning {
+            background: var(--warning);
+        }
+        
+        /* Coin animation */
+        @keyframes coinFlip {
+            0% { transform: rotateY(0); }
+            50% { transform: rotateY(180deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .coin-animation {
+            animation: coinFlip 1s ease-in-out;
+        }
+        
+        /* Task completion checkmark */
+        .task-completed {
+            color: var(--success);
+            margin-left: 10px;
+        }
+        
+        /* Subscription verification */
+        .verify-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .verify-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+        
+        /* Countdown timer */
+        .countdown {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: var(--primary);
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        /* Realistic message styles */
+        .realistic-message {
+            background: rgba(255, 217, 0, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .realistic-message.success {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: var(--success);
+        }
+        
+        .realistic-message.warning {
+            background: rgba(255, 152, 0, 0.1);
+            border-color: var(--warning);
+        }
+        
+        .realistic-message.error {
+            background: rgba(244, 67, 54, 0.1);
+            border-color: var(--danger);
+        }
+        
+        .message-icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .message-icon.success {
+            color: var(--success);
+        }
+        
+        .message-icon.warning {
+            color: var(--warning);
+        }
+        
+        .message-icon.error {
+            color: var(--danger);
+        }
+        
+        /* Daily limit indicator */
+        .daily-limit {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 217, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .limit-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .limit-progress {
+            font-weight: bold;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="app-name">QuiXora 69</div>
+        <div class="user-info">
+            <img id="user-avatar" class="user-avatar" src="" alt="User Avatar">
+            <div class="user-details">
+                <div id="user-name" class="user-name">Loading...</div>
+                <div id="user-id" class="user-id">ID: #</div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+        <div class="balance-section">
+            <div class="balance-label">Main Balance</div>
+            <div class="balance-amount" id="main-balance">0.00 TK</div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">TODAY'S ADS</div>
+                <div class="stat-value" id="today-ads">0 / 10</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TOTAL REFERRALS</div>
+                <div class="stat-value" id="referral-count">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TOTAL ADS WATCHED</div>
+                <div class="stat-value" id="total-ads">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TOTAL INCOME</div>
+                <div class="stat-value" id="total-income">0.00 TK</div>
+            </div>
+        </div>
+        
+        <div class="wallet-section">
+            <div class="balance-label">Earning Wallet</div>
+            <div class="wallet-amount" id="wallet-amount">0.00 TK</div>
+            <div class="wallet-info">Minimum 100 TK to move to main balance.</div>
+            <button class="btn" id="move-to-main-btn" disabled>Move to Main Balance</button>
+        </div>
+        
+        <div class="daily-limit">
+            <div class="limit-text">Daily Ads Limit: <span id="ads-remaining">10</span> remaining</div>
+            <div class="limit-progress" id="daily-progress">0/10</div>
+        </div>
+        
+        <div class="tasks-section">
+            <h2>Watch Ads & Earn</h2>
+            <div class="task-card">
+                <div class="task-info">
+                    <h3>Watch a Rewarded Ad</h3>
+                    <p>Earn 30.00 TK for every ad. Max 10 ads per day.</p>
+                </div>
+                <div class="task-reward">
+                    <button class="btn" id="watch-ad-btn">Watch Ad</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tasks-section">
+            <h2>Bonus Tasks</h2>
+            <div class="bonus-tasks">
+                <div class="bonus-task" id="youtube-task">
+                    <h3>Subscribe YouTube</h3>
+                    <div class="bonus-reward">50 TK</div>
+                    <button class="btn" id="youtube-btn">Get Bonus</button>
+                    <button class="verify-btn" id="verify-youtube">Verify</button>
+                </div>
+                <div class="bonus-task" id="telegram-task">
+                    <h3>Join Telegram</h3>
+                    <div class="bonus-reward">50 TK</div>
+                    <button class="btn" id="telegram-btn">Get Bonus</button>
+                    <button class="verify-btn" id="verify-telegram">Verify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tasks Screen -->
+    <div id="tasks-screen" class="screen">
+        <div class="tasks-section">
+            <h2>Available Tasks</h2>
+            
+            <div class="task-card">
+                <div class="task-info">
+                    <h3>Watch Rewarded Ads</h3>
+                    <p>Earn 30.00 TK for every ad watched. Max 10 per day.</p>
+                    <div class="daily-limit">
+                        <div class="limit-text">Remaining today: <span id="task-ads-remaining">10</span></div>
+                        <div class="limit-progress" id="task-daily-progress">0/10</div>
+                    </div>
+                </div>
+                <div class="task-reward">
+                    <button class="btn watch-ad-task">Watch Ad</button>
+                </div>
+            </div>
+            
+            <div class="task-card">
+                <div class="task-info">
+                    <h3>Subscribe YouTube</h3>
+                    <p>Subscribe to our YouTube channel for 50 TK</p>
+                </div>
+                <div class="task-reward">
+                    <button class="btn" id="youtube-task-btn">Get Bonus</button>
+                </div>
+            </div>
+            
+            <div class="task-card">
+                <div class="task-info">
+                    <h3>Join Telegram Channel</h3>
+                    <p>Join our Telegram channel for 50 TK</p>
+                </div>
+                <div class="task-reward">
+                    <button class="btn" id="telegram-task-btn">Get Bonus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Visit Screen -->
+    <div id="visit-screen" class="screen">
+        <div class="tasks-section">
+            <h2>Visit Our Channels</h2>
+            <p>Follow our channels for updates and more earning opportunities:</p>
+            
+            <div class="channel-links">
+                <a href="https://t.me/dragonballz0928" class="channel-link" target="_blank">
+                    <div class="channel-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <span>Telegram</span>
+                </a>
+                
+                <a href="https://www.youtube.com/@QuiXora69" class="channel-link" target="_blank">
+                    <div class="channel-icon">
+                        <i class="fab fa-youtube"></i>
+                    </div>
+                    <span>YouTube</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="tasks-section">
+            <h2>Join Our Telegram Bot</h2>
+            <p>Use our Telegram bot for more features:</p>
+            
+            <div class="referral-link-container">
+                <span class="referral-link">@lootyourtakabot</span>
+                <button class="copy-btn" id="copy-bot-btn">Copy</button>
+            </div>
+            
+            <button class="btn" id="open-telegram-btn">Open in Telegram</button>
+        </div>
+    </div>
+    
+    <!-- Profile Screen -->
+    <div id="profile-screen" class="screen">
+        <div class="referral-section">
+            <h2>Refer & Earn More!</h2>
+            <p>Invite friends and earn 100.00 TK per person!</p>
+            
+            <div class="referral-link-container">
+                <span class="referral-link" id="referral-link-text">Loading...</span>
+                <button class="copy-btn" id="copy-link-btn">Copy</button>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Referral Progress</span>
+                    <span id="referral-progress">0/10</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="referral-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <!-- Withdrawal Steps - Only show when user has 500 TK -->
+            <div id="withdrawal-steps" style="display: none;">
+                <h3>Withdrawal Requirements</h3>
+                <div class="verification-steps">
+                    <div class="step" id="step-1">
+                        <div class="step-icon">1</div>
+                        <div class="step-text">Complete 10 Referrals</div>
+                    </div>
+                    <div class="step" id="step-2">
+                        <div class="step-icon">2</div>
+                        <div class="step-text">Refer 2 More Friends</div>
+                    </div>
+                    <div class="step" id="step-3">
+                        <div class="step-icon">3</div>
+                        <div class="step-text">Account Verification (7 Days)</div>
+                    </div>
+                </div>
+                
+                <!-- Countdown Timer - Only show when verification starts -->
+                <div id="countdown-container" style="display: none;">
+                    <div class="countdown-label">Verification Time Remaining:</div>
+                    <div class="countdown" id="verification-countdown">7 days 00:00:00</div>
+                </div>
+            </div>
+            
+            <!-- Realistic messages based on user status -->
+            <div id="referral-messages">
+                <div class="realistic-message" id="earn-more-message">
+                    <div class="message-icon"><i class="fas fa-coins"></i></div>
+                    <p>Earn at least 500 TK to unlock withdrawal requirements!</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="withdraw-form">
+            <h2>Request Withdraw</h2>
+            <div class="note" id="withdraw-note">
+                <strong>Note:</strong> You need to earn at least 500 TK to see withdrawal requirements.
+            </div>
+            
+            <div class="form-group">
+                <label for="withdraw-method">Method:</label>
+                <select id="withdraw-method">
+                    <option value="">Select Method</option>
+                    <option value="bkash">bKash (Min: 500 TK)</option>
+                    <option value="nagad">Nagad (Min: 500 TK)</option>
+                    <option value="rocket">Rocket (Min: 500 TK)</option>
+                    <option value="usdt">USDT TRC20 (Min: 500 TK)</option>
+                    <option value="paypal">PayPal (Min: 500 TK)</option>
+                    <option value="paytm">Paytm (Min: 500 TK)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="account-number">Account Number/ID:</label>
+                <input type="text" id="account-number" placeholder="Enter your account number">
+            </div>
+            
+            <div class="form-group">
+                <label for="withdraw-amount">Amount (Min: 500 TK):</label>
+                <input type="number" id="withdraw-amount" placeholder="Enter amount" min="500">
+            </div>
+            
+            <button class="btn" id="submit-withdraw-btn" disabled>Submit Request</button>
+        </div>
+    </div>
+    
+    <!-- Support Screen -->
+    <div id="support-screen" class="screen">
+        <div class="tasks-section">
+            <h2>Support</h2>
+            <p>If you need help, please contact our support team:</p>
+            
+            <div class="form-group">
+                <label for="support-message">Your Message:</label>
+                <textarea id="support-message" rows="5" placeholder="Describe your issue here..."></textarea>
+            </div>
+            
+            <button class="btn" id="send-support-btn">Send Message</button>
+            
+            <div class="note" style="margin-top: 20px;">
+                <strong>Telegram Support:</strong> @QuiXoraSupport
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <h3>Success!</h3>
+            <p id="success-message">+30.00 TK added to your Earning Wallet.</p>
+            <button class="close-btn" id="close-modal-btn">CLOSE</button>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Link copied to clipboard!</div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <a href="#" class="nav-item active" data-screen="home-screen">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </a>
+        <a href="#" class="nav-item" data-screen="tasks-screen">
+            <div class="nav-icon"><i class="fas fa-tasks"></i></div>
+            <div>Tasks</div>
+        </a>
+        <a href="#" class="nav-item" data-screen="visit-screen">
+            <div class="nav-icon"><i class="fas fa-external-link-alt"></i></div>
+            <div>Visit</div>
+        </a>
+        <a href="#" class="nav-item" data-screen="support-screen">
+            <div class="nav-icon"><i class="fas fa-headset"></i></div>
+            <div>Support</div>
+        </a>
+        <a href="#" class="nav-item" data-screen="profile-screen">
+            <div class="nav-icon"><i class="fas fa-user"></i></div>
+            <div>Profile</div>
+        </a>
+    </div>
+    
+    <!-- Monetag SDK -->
+    <script src='//libtl.com/sdk.js' data-zone='10073083' data-sdk='show_10073083'></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKXGT6Ac8aqtYb0oTi4PUMenGmCchoUN4",
+            authDomain: "taka-kamao-e213a.firebaseapp.com",
+            databaseURL: "https://taka-kamao-e213a-default-rtdb.firebaseio.com",
+            projectId: "taka-kamao-e213a",
+            storageBucket: "taka-kamao-e213a.firebasestorage.app",
+            messagingSenderId: "744359558675",
+            appId: "1:744359558675:web:33374568000f5f157609e6"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Telegram bot info
+        const botUsername = "@lootyourtakabot";
+        const botApiKey = "8390509995:AAEz0c3eMkl6dN3qwZSEBxR2jazo8C-zqIc";
+        
+        // Get Telegram user data
+        let tg = window.Telegram.WebApp;
+        let userData = {
+            userId: tg.initDataUnsafe?.user?.id || generateUserId(),
+            firstName: tg.initDataUnsafe?.user?.first_name || "User",
+            lastName: tg.initDataUnsafe?.user?.last_name || "",
+            username: tg.initDataUnsafe?.user?.username || "user",
+            photoUrl: tg.initDataUnsafe?.user?.photo_url || "",
+            mainBalance: 0,
+            walletBalance: 0,
+            referrals: 0,
+            adsWatched: 0,
+            totalIncome: 0,
+            todayAds: 0,
+            youtubeCompleted: false,
+            telegramCompleted: false,
+            referredBy: getUrlParameter('ref') || null,
+            verificationStart: null,
+            lastAdWatch: null
+        };
+        
+        // Generate a random user ID if not from Telegram
+        function generateUserId() {
+            return Math.floor(10000 + Math.random() * 90000);
+        }
+        
+        // Get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Format time for countdown
+        function formatTime(seconds) {
+            const days = Math.floor(seconds / (24 * 60 * 60));
+            const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
+            const minutes = Math.floor((seconds % (60 * 60)) / 60);
+            const secs = seconds % 60;
+            
+            return `${days} days ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Update countdown timer
+        function updateCountdown() {
+            const countdownElement = document.getElementById('verification-countdown');
+            const countdownContainer = document.getElementById('countdown-container');
+            
+            if (!userData.verificationStart) return;
+            
+            const verificationEnd = userData.verificationStart + (7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+            const now = Date.now();
+            const remaining = Math.max(0, Math.floor((verificationEnd - now) / 1000));
+            
+            if (remaining > 0) {
+                countdownElement.textContent = formatTime(remaining);
+                countdownContainer.style.display = 'block';
+            } else {
+                countdownElement.textContent = "Verification Complete!";
+                countdownContainer.style.display = 'block';
+            }
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set user data from Telegram
+            document.getElementById('user-name').textContent = userData.firstName + (userData.lastName ? ' ' + userData.lastName : '');
+            document.getElementById('user-id').textContent = 'ID: #' + userData.userId;
+            
+            if (userData.photoUrl) {
+                document.getElementById('user-avatar').src = userData.photoUrl;
+            } else {
+                document.getElementById('user-avatar').src = 'https://via.placeholder.com/40?text=' + userData.firstName.charAt(0);
+            }
+            
+            // Set referral link
+            document.getElementById('referral-link-text').textContent = `https://t.me/${botUsername.replace('@', '')}?start=${userData.userId}`;
+            
+            // Load user data from Firebase
+            loadUserData();
+            
+            // Start countdown timer
+            setInterval(updateCountdown, 1000);
+            
+            // Navigation functionality
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all nav items
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked nav item
+                    this.classList.add('active');
+                    
+                    // Hide all screens
+                    document.querySelectorAll('.screen').forEach(screen => {
+                        screen.classList.remove('active');
+                    });
+                    
+                    // Show the selected screen
+                    const screenId = this.getAttribute('data-screen');
+                    document.getElementById(screenId).classList.add('active');
+                });
+            });
+            
+            // Watch ad functionality
+            document.getElementById('watch-ad-btn').addEventListener('click', function() {
+                if (userData.todayAds >= 10) {
+                    showToast('Daily ad limit reached! Come back tomorrow.', 'warning');
+                    return;
+                }
+                
+                // Show rewarded ad
+                show_10073083('pop').then(() => {
+                    // User watched the ad
+                    userData.walletBalance += 30;
+                    userData.adsWatched++;
+                    userData.todayAds++;
+                    userData.totalIncome += 30;
+                    userData.lastAdWatch = Date.now();
+                    
+                    updateUI();
+                    
+                    // Show success modal
+                    document.getElementById('success-message').textContent = '+30.00 TK added to your Earning Wallet.';
+                    document.getElementById('success-modal').style.display = 'flex';
+                    
+                    // Save to Firebase
+                    saveUserData();
+                }).catch(e => {
+                    // User didn't watch the ad
+                    showToast('Ad was not completed', 'error');
+                });
+            });
+            
+            // Task screen watch ad
+            document.querySelectorAll('.watch-ad-task').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (userData.todayAds >= 10) {
+                        showToast('Daily ad limit reached! Come back tomorrow.', 'warning');
+                        return;
+                    }
+                    
+                    // Show rewarded ad
+                    show_10073083('pop').then(() => {
+                        // User watched the ad
+                        userData.walletBalance += 30;
+                        userData.adsWatched++;
+                        userData.todayAds++;
+                        userData.totalIncome += 30;
+                        userData.lastAdWatch = Date.now();
+                        
+                        updateUI();
+                        
+                        // Show success modal
+                        document.getElementById('success-message').textContent = '+30.00 TK added to your Earning Wallet.';
+                        document.getElementById('success-modal').style.display = 'flex';
+                        
+                        // Save to Firebase
+                        saveUserData();
+                    }).catch(e => {
+                        // User didn't watch the ad
+                        showToast('Ad was not completed', 'error');
+                    });
+                });
+            });
+            
+            // Close modal functionality
+            document.getElementById('close-modal-btn').addEventListener('click', function() {
+                document.getElementById('success-modal').style.display = 'none';
+            });
+            
+            // Copy link functionality - FIXED
+            document.getElementById('copy-link-btn').addEventListener('click', function() {
+                const link = `https://t.me/${botUsername.replace('@', '')}?start=${userData.userId}`;
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast('Referral link copied to clipboard!');
+                }).catch(err => {
+                    // Fallback for browsers that don't support clipboard API
+                    const textArea = document.createElement('textarea');
+                    textArea.value = link;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showToast('Referral link copied to clipboard!');
+                });
+            });
+            
+            // Copy bot username
+            document.getElementById('copy-bot-btn').addEventListener('click', function() {
+                navigator.clipboard.writeText(botUsername).then(() => {
+                    showToast('Bot username copied to clipboard!');
+                }).catch(err => {
+                    // Fallback for browsers that don't support clipboard API
+                    const textArea = document.createElement('textarea');
+                    textArea.value = botUsername;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showToast('Bot username copied to clipboard!');
+                });
+            });
+            
+            // Open Telegram bot
+            document.getElementById('open-telegram-btn').addEventListener('click', function() {
+                window.open('https://t.me/' + botUsername.replace('@', ''), '_blank');
+            });
+            
+            // YouTube subscription
+            document.getElementById('youtube-btn').addEventListener('click', function() {
+                window.open('https://www.youtube.com/@QuiXora69', '_blank');
+                showToast('Please subscribe and then click Verify');
+            });
+            
+            document.getElementById('youtube-task-btn').addEventListener('click', function() {
+                window.open('https://www.youtube.com/@QuiXora69', '_blank');
+                showToast('Please subscribe and then click Verify');
+            });
+            
+            document.getElementById('verify-youtube').addEventListener('click', function() {
+                // In a real app, you would verify subscription via API
+                // For demo, we'll assume it's successful
+                if (!userData.youtubeCompleted) {
+                    userData.walletBalance += 50;
+                    userData.totalIncome += 50;
+                    userData.youtubeCompleted = true;
+                    updateUI();
+                    saveUserData();
+                    showToast('YouTube subscription verified! +50 TK added');
+                    document.getElementById('youtube-task').innerHTML += '<span class="task-completed"><i class="fas fa-check-circle"></i></span>';
+                } else {
+                    showToast('You have already claimed this bonus', 'warning');
+                }
+            });
+            
+            // Telegram channel join
+            document.getElementById('telegram-btn').addEventListener('click', function() {
+                window.open('https://t.me/dragonballz0928', '_blank');
+                showToast('Please join the channel and then click Verify');
+            });
+            
+            document.getElementById('telegram-task-btn').addEventListener('click', function() {
+                window.open('https://t.me/dragonballz0928', '_blank');
+                showToast('Please join the channel and then click Verify');
+            });
+            
+            document.getElementById('verify-telegram').addEventListener('click', function() {
+                // In a real app, you would verify channel membership via bot
+                // For demo, we'll assume it's successful
+                if (!userData.telegramCompleted) {
+                    userData.walletBalance += 50;
+                    userData.totalIncome += 50;
+                    userData.telegramCompleted = true;
+                    updateUI();
+                    saveUserData();
+                    showToast('Telegram channel join verified! +50 TK added');
+                    document.getElementById('telegram-task').innerHTML += '<span class="task-completed"><i class="fas fa-check-circle"></i></span>';
+                } else {
+                    showToast('You have already claimed this bonus', 'warning');
+                }
+            });
+            
+            // Withdraw form validation
+            const withdrawMethod = document.getElementById('withdraw-method');
+            const accountNumber = document.getElementById('account-number');
+            const withdrawAmount = document.getElementById('withdraw-amount');
+            const submitWithdrawBtn = document.getElementById('submit-withdraw-btn');
+            const withdrawNote = document.getElementById('withdraw-note');
+            
+            function validateWithdrawForm() {
+                // Check if user has at least 500 TK
+                if (userData.mainBalance < 500) {
+                    withdrawNote.innerHTML = '<strong>Note:</strong> You need at least 500 TK in your main balance to withdraw.';
+                    submitWithdrawBtn.disabled = true;
+                    return;
+                }
+                
+                // Check referral requirements
+                if (userData.referrals < 10) {
+                    withdrawNote.innerHTML = '<strong>Note:</strong> You need at least 10 referrals to be eligible. Your referrals: ' + userData.referrals;
+                    submitWithdrawBtn.disabled = true;
+                    return;
+                } else if (userData.referrals < 12) {
+                    withdrawNote.innerHTML = '<strong>Note:</strong> Before withdraw, refer ' + (12 - userData.referrals) + ' more friends. Your referrals: ' + userData.referrals;
+                    submitWithdrawBtn.disabled = true;
+                    return;
+                } else if (!userData.verificationStart) {
+                    withdrawNote.innerHTML = '<strong>Note:</strong> Your account is on verification road and it takes 7 days. Please be patient.';
+                    submitWithdrawBtn.disabled = true;
+                    return;
+                } else {
+                    const verificationEnd = userData.verificationStart + (7 * 24 * 60 * 60 * 1000);
+                    const now = Date.now();
+                    
+                    if (now < verificationEnd) {
+                        const remaining = Math.floor((verificationEnd - now) / 1000);
+                        withdrawNote.innerHTML = `<strong>Note:</strong> Your account is under verification. Time remaining: ${formatTime(remaining)}`;
+                        submitWithdrawBtn.disabled = true;
+                        return;
+                    } else {
+                        withdrawNote.innerHTML = '<strong>Note:</strong> Your account is verified! You can now withdraw.';
+                    }
+                    
+                    if (withdrawMethod.value && accountNumber.value && withdrawAmount.value && 
+                        parseInt(withdrawAmount.value) >= 500 && userData.mainBalance >= parseInt(withdrawAmount.value)) {
+                        submitWithdrawBtn.disabled = false;
+                    } else {
+                        submitWithdrawBtn.disabled = true;
+                    }
+                }
+            }
+            
+            withdrawMethod.addEventListener('change', validateWithdrawForm);
+            accountNumber.addEventListener('input', validateWithdrawForm);
+            withdrawAmount.addEventListener('input', validateWithdrawForm);
+            
+            // Submit withdraw request
+            submitWithdrawBtn.addEventListener('click', function() {
+                if (userData.mainBalance < 500) {
+                    showToast('Minimum withdrawal amount is 500 TK', 'error');
+                    return;
+                }
+                
+                const amount = parseInt(withdrawAmount.value);
+                if (amount > userData.mainBalance) {
+                    showToast('Insufficient balance', 'error');
+                    return;
+                }
+                
+                showToast('Withdrawal request submitted!', 'success');
+                
+                // Deduct amount from balance
+                userData.mainBalance -= amount;
+                updateUI();
+                saveUserData();
+                
+                // Reset form
+                withdrawMethod.value = '';
+                accountNumber.value = '';
+                withdrawAmount.value = '';
+                submitWithdrawBtn.disabled = true;
+            });
+            
+            // Move to main balance
+            const moveToMainBtn = document.getElementById('move-to-main-btn');
+            
+            moveToMainBtn.addEventListener('click', function() {
+                if (userData.walletBalance >= 100) {
+                    userData.mainBalance += userData.walletBalance;
+                    userData.walletBalance = 0;
+                    updateUI();
+                    showToast('Balance moved to main account!');
+                    saveUserData();
+                }
+            });
+            
+            // Send support message
+            document.getElementById('send-support-btn').addEventListener('click', function() {
+                const message = document.getElementById('support-message').value;
+                if (message.trim() === '') {
+                    showToast('Please enter a message', 'error');
+                    return;
+                }
+                
+                showToast('Message sent to support!');
+                document.getElementById('support-message').value = '';
+            });
+            
+            // Update verification steps
+            updateVerificationSteps();
+        });
+        
+        // Update UI with current user data
+        function updateUI() {
+            document.getElementById('main-balance').textContent = userData.mainBalance.toFixed(2) + ' TK';
+            document.getElementById('wallet-amount').textContent = userData.walletBalance.toFixed(2) + ' TK';
+            document.getElementById('referral-count').textContent = userData.referrals;
+            document.getElementById('today-ads').textContent = userData.todayAds + ' / 10';
+            document.getElementById('total-ads').textContent = userData.adsWatched;
+            document.getElementById('total-income').textContent = userData.totalIncome.toFixed(2) + ' TK';
+            
+            // Update daily ads limit
+            const adsRemaining = 10 - userData.todayAds;
+            document.getElementById('ads-remaining').textContent = adsRemaining;
+            document.getElementById('daily-progress').textContent = userData.todayAds + '/10';
+            document.getElementById('task-ads-remaining').textContent = adsRemaining;
+            document.getElementById('task-daily-progress').textContent = userData.todayAds + '/10';
+            
+            // Update move to main button
+            const moveToMainBtn = document.getElementById('move-to-main-btn');
+            if (userData.walletBalance >= 100) {
+                moveToMainBtn.disabled = false;
+            } else {
+                moveToMainBtn.disabled = true;
+            }
+            
+            // Update referral progress
+            const progress = Math.min(userData.referrals, 12);
+            const progressPercent = (progress / 12) * 100;
+            document.getElementById('referral-progress').textContent = progress + '/12';
+            document.getElementById('referral-progress-bar').style.width = progressPercent + '%';
+            
+            // Show/hide withdrawal steps based on balance
+            const withdrawalSteps = document.getElementById('withdrawal-steps');
+            const earnMoreMessage = document.getElementById('earn-more-message');
+            
+            if (userData.mainBalance >= 500) {
+                withdrawalSteps.style.display = 'block';
+                earnMoreMessage.style.display = 'none';
+            } else {
+                withdrawalSteps.style.display = 'none';
+                earnMoreMessage.style.display = 'block';
+            }
+            
+            // Update verification steps
+            updateVerificationSteps();
+            
+            // Update withdraw form
+            validateWithdrawForm();
+            
+            // Start verification if user has 12 referrals but no verification start time
+            if (userData.referrals >= 12 && !userData.verificationStart) {
+                userData.verificationStart = Date.now();
+                saveUserData();
+                showToast('Account verification started! It will take 7 days.', 'warning');
+            }
+        }
+        
+        // Update verification steps based on referral count
+        function updateVerificationSteps() {
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const step3 = document.getElementById('step-3');
+            
+            // Reset all steps
+            step1.className = 'step';
+            step2.className = 'step';
+            step3.className = 'step';
+            
+            if (userData.referrals >= 10) {
+                step1.className = 'step completed';
+                
+                if (userData.referrals >= 12) {
+                    step2.className = 'step completed';
+                    step3.className = 'step active';
+                } else {
+                    step2.className = 'step active';
+                }
+            } else {
+                step1.className = 'step active';
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast';
+            
+            if (type === 'error') {
+                toast.classList.add('error');
+            } else if (type === 'warning') {
+                toast.classList.add('warning');
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Validate withdraw form (declared separately for global access)
+        function validateWithdrawForm() {
+            const withdrawMethod = document.getElementById('withdraw-method');
+            const accountNumber = document.getElementById('account-number');
+            const withdrawAmount = document.getElementById('withdraw-amount');
+            const submitWithdrawBtn = document.getElementById('submit-withdraw-btn');
+            const withdrawNote = document.getElementById('withdraw-note');
+            
+            // Check if user has at least 500 TK
+            if (userData.mainBalance < 500) {
+                withdrawNote.innerHTML = '<strong>Note:</strong> You need at least 500 TK in your main balance to withdraw.';
+                submitWithdrawBtn.disabled = true;
+                return;
+            }
+            
+            // Check referral requirements
+            if (userData.referrals < 10) {
+                withdrawNote.innerHTML = '<strong>Note:</strong> You need at least 10 referrals to be eligible. Your referrals: ' + userData.referrals;
+                submitWithdrawBtn.disabled = true;
+                return;
+            } else if (userData.referrals < 12) {
+                withdrawNote.innerHTML = '<strong>Note:</strong> Before withdraw, refer ' + (12 - userData.referrals) + ' more friends. Your referrals: ' + userData.referrals;
+                submitWithdrawBtn.disabled = true;
+                return;
+            } else if (!userData.verificationStart) {
+                withdrawNote.innerHTML = '<strong>Note:</strong> Your account is on verification road and it takes 7 days. Please be patient.';
+                submitWithdrawBtn.disabled = true;
+                return;
+            } else {
+                const verificationEnd = userData.verificationStart + (7 * 24 * 60 * 60 * 1000);
+                const now = Date.now();
+                
+                if (now < verificationEnd) {
+                    const remaining = Math.floor((verificationEnd - now) / 1000);
+                    withdrawNote.innerHTML = `<strong>Note:</strong> Your account is under verification. Time remaining: ${formatTime(remaining)}`;
+                    submitWithdrawBtn.disabled = true;
+                    return;
+                } else {
+                    withdrawNote.innerHTML = '<strong>Note:</strong> Your account is verified! You can now withdraw.';
+                }
+                
+                if (withdrawMethod.value && accountNumber.value && withdrawAmount.value && 
+                    parseInt(withdrawAmount.value) >= 500 && userData.mainBalance >= parseInt(withdrawAmount.value)) {
+                    submitWithdrawBtn.disabled = false;
+                } else {
+                    submitWithdrawBtn.disabled = true;
+                }
+            }
+        }
+        
+        // Save user data to Firebase
+        function saveUserData() {
+            const userId = userData.userId;
+            database.ref('users/' + userId).set(userData)
+            .then(() => {
+                console.log('Data saved successfully');
+                
+                // If this user was referred by someone, update the referrer's count
+                if (userData.referredBy) {
+                    database.ref('users/' + userData.referredBy).once('value')
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const referrerData = snapshot.val();
+                            referrerData.referrals += 1;
+                            referrerData.walletBalance += 100;
+                            referrerData.totalIncome += 100;
+                            database.ref('users/' + userData.referredBy).set(referrerData);
+                        }
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error('Error saving data:', error);
+            });
+        }
+        
+        // Load user data from Firebase
+        function loadUserData() {
+            const userId = userData.userId;
+            database.ref('users/' + userId).once('value')
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const savedData = snapshot.val();
+                    // Merge saved data with current user data
+                    userData = {...userData, ...savedData};
+                    updateUI();
+                } else {
+                    // Save initial user data
+                    saveUserData();
+                }
+            })
+            .catch((error) => {
+                console.error('Error loading data:', error);
+            });
+        }
+        
+        // Show interstitial ads periodically (non-rewarded)
+        function showInterstitialAds() {
+            if (userData.lastAdWatch && (Date.now() - userData.lastAdWatch) < 30000) {
+                // Don't show ads too frequently
+                return;
+            }
+            
+            show_10073083({
+                type: 'inApp',
+                inAppSettings: {
+                    frequency: 2,
+                    capping: 0.1,
+                    interval: 30,
+                    timeout: 5,
+                    everyPage: false
+                }
+            });
+            
+            userData.lastAdWatch = Date.now();
+        }
+        
+        // Initialize interstitial ads
+        setTimeout(showInterstitialAds, 35000);
+        setInterval(showInterstitialAds, 40000);
+    </script>
+</body>
+</html>
