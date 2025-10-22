@@ -807,6 +807,27 @@
             font-weight: bold;
             color: var(--primary);
         }
+        
+        /* Ad status indicator */
+        .ad-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 217, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .ad-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .ad-timer {
+            font-weight: bold;
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -857,6 +878,11 @@
         <div class="daily-limit">
             <div class="limit-text">Daily Ads Limit: <span id="ads-remaining">10</span> remaining</div>
             <div class="limit-progress" id="daily-progress">0/10</div>
+        </div>
+        
+        <div class="ad-status">
+            <div class="ad-text">Next Auto Ad:</div>
+            <div class="ad-timer" id="auto-ad-timer">30s</div>
         </div>
         
         <div class="tasks-section">
@@ -1152,8 +1178,13 @@
             telegramCompleted: false,
             referredBy: getUrlParameter('ref') || null,
             verificationStart: null,
-            lastAdWatch: null
+            lastAdWatch: null,
+            lastAutoAd: null
         };
+        
+        // Auto ad timer
+        let autoAdTimer = 30;
+        let autoAdInterval;
         
         // Generate a random user ID if not from Telegram
         function generateUserId() {
@@ -1198,6 +1229,50 @@
             }
         }
         
+        // Start auto ad timer
+        function startAutoAdTimer() {
+            clearInterval(autoAdInterval);
+            autoAdTimer = 30;
+            updateAutoAdTimer();
+            
+            autoAdInterval = setInterval(() => {
+                autoAdTimer--;
+                updateAutoAdTimer();
+                
+                if (autoAdTimer <= 0) {
+                    showAutoAd();
+                    autoAdTimer = 30;
+                }
+            }, 1000);
+        }
+        
+        // Update auto ad timer display
+        function updateAutoAdTimer() {
+            document.getElementById('auto-ad-timer').textContent = autoAdTimer + 's';
+        }
+        
+        // Show auto ad (non-rewarded)
+        function showAutoAd() {
+            // Don't show auto ads too frequently
+            if (userData.lastAutoAd && (Date.now() - userData.lastAutoAd) < 25000) {
+                return;
+            }
+            
+            show_10073083({
+                type: 'inApp',
+                inAppSettings: {
+                    frequency: 2,
+                    capping: 0.1,
+                    interval: 30,
+                    timeout: 5,
+                    everyPage: false
+                }
+            });
+            
+            userData.lastAutoAd = Date.now();
+            showToast('Auto ad displayed', 'warning');
+        }
+        
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             // Set user data from Telegram
@@ -1218,6 +1293,9 @@
             
             // Start countdown timer
             setInterval(updateCountdown, 1000);
+            
+            // Start auto ad timer
+            startAutoAdTimer();
             
             // Navigation functionality
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -1243,7 +1321,7 @@
                 });
             });
             
-            // Watch ad functionality
+            // Watch ad functionality - REWARDED AD (30 TK)
             document.getElementById('watch-ad-btn').addEventListener('click', function() {
                 if (userData.todayAds >= 10) {
                     showToast('Daily ad limit reached! Come back tomorrow.', 'warning');
@@ -1252,7 +1330,7 @@
                 
                 // Show rewarded ad
                 show_10073083('pop').then(() => {
-                    // User watched the ad
+                    // User watched the ad - REWARD THEM WITH 30 TK
                     userData.walletBalance += 30;
                     userData.adsWatched++;
                     userData.todayAds++;
@@ -1273,7 +1351,7 @@
                 });
             });
             
-            // Task screen watch ad
+            // Task screen watch ad - REWARDED AD (30 TK)
             document.querySelectorAll('.watch-ad-task').forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (userData.todayAds >= 10) {
@@ -1283,7 +1361,7 @@
                     
                     // Show rewarded ad
                     show_10073083('pop').then(() => {
-                        // User watched the ad
+                        // User watched the ad - REWARD THEM WITH 30 TK
                         userData.walletBalance += 30;
                         userData.adsWatched++;
                         userData.todayAds++;
@@ -1707,31 +1785,6 @@
                 console.error('Error loading data:', error);
             });
         }
-        
-        // Show interstitial ads periodically (non-rewarded)
-        function showInterstitialAds() {
-            if (userData.lastAdWatch && (Date.now() - userData.lastAdWatch) < 30000) {
-                // Don't show ads too frequently
-                return;
-            }
-            
-            show_10073083({
-                type: 'inApp',
-                inAppSettings: {
-                    frequency: 2,
-                    capping: 0.1,
-                    interval: 30,
-                    timeout: 5,
-                    everyPage: false
-                }
-            });
-            
-            userData.lastAdWatch = Date.now();
-        }
-        
-        // Initialize interstitial ads
-        setTimeout(showInterstitialAds, 35000);
-        setInterval(showInterstitialAds, 40000);
     </script>
 </body>
 </html>
