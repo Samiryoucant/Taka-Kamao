@@ -1305,9 +1305,9 @@
         // Get Telegram user data
         let tg = window.Telegram.WebApp;
         
-        // Generate unique user ID
+        // Generate unique user ID with better persistence
         function generateUserId() {
-            // Use Telegram user ID if available, otherwise generate a random one
+            // Use Telegram user ID if available
             if (tg.initDataUnsafe?.user?.id) {
                 return "tg_" + tg.initDataUnsafe.user.id;
             }
@@ -1319,7 +1319,7 @@
             }
             
             // Generate new user ID and store it
-            let newUserId = "user_" + Math.floor(10000 + Math.random() * 90000);
+            let newUserId = "user_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
             localStorage.setItem('user_id', newUserId);
             return newUserId;
         }
@@ -1351,7 +1351,8 @@
             verificationStart: null,
             lastAdWatch: null,
             lastAutoAd: null,
-            lastLogin: new Date().toISOString()
+            lastLogin: new Date().toISOString(),
+            createdAt: new Date().toISOString()
         };
         
         let userData = { ...defaultUserData };
@@ -1950,7 +1951,7 @@
             
             return database.ref('users/' + userId).set(userData)
             .then(() => {
-                console.log('Data saved successfully');
+                console.log('Data saved successfully to Firebase');
                 
                 // If this user was referred by someone, update the referrer's count
                 if (userData.referredBy && !userData.referralProcessed) {
@@ -1975,7 +1976,9 @@
                 }
             })
             .catch((error) => {
-                console.error('Error saving data:', error);
+                console.error('Error saving data to Firebase:', error);
+                // Fallback to localStorage if Firebase fails
+                localStorage.setItem('user_data_' + userId, JSON.stringify(userData));
             });
         }
         
@@ -1983,6 +1986,7 @@
         function loadUserData() {
             const userId = userData.userId;
             
+            // Try to load from Firebase first
             database.ref('users/' + userId).once('value')
             .then((snapshot) => {
                 if (snapshot.exists()) {
@@ -2002,6 +2006,7 @@
                     // Merge saved data with current user data
                     userData = { ...userData, ...savedData };
                     updateUI();
+                    console.log('Data loaded from Firebase');
                 } else {
                     // New user - save initial data
                     saveUserData().then(() => {
@@ -2010,7 +2015,34 @@
                 }
             })
             .catch((error) => {
-                console.error('Error loading data:', error);
+                console.error('Error loading data from Firebase:', error);
+                
+                // Fallback to localStorage
+                const localData = localStorage.getItem('user_data_' + userId);
+                if (localData) {
+                    const savedData = JSON.parse(localData);
+                    
+                    // Check if we need to reset daily ads (if it's a new day)
+                    const lastLogin = savedData.lastLogin ? new Date(savedData.lastLogin) : new Date();
+                    const today = new Date();
+                    
+                    // Reset daily ads if it's a new day
+                    if (lastLogin.getDate() !== today.getDate() || 
+                        lastLogin.getMonth() !== today.getMonth() || 
+                        lastLogin.getFullYear() !== today.getFullYear()) {
+                        savedData.todayAds = 0;
+                    }
+                    
+                    // Merge saved data with current user data
+                    userData = { ...userData, ...savedData };
+                    updateUI();
+                    console.log('Data loaded from localStorage');
+                } else {
+                    // First time user - save initial data
+                    saveUserData().then(() => {
+                        updateUI();
+                    });
+                }
             });
         }
     </script>
