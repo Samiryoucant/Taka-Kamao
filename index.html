@@ -15,16 +15,17 @@
             --primary-light: #FFF9C4;
             --text-dark: #FFFFFF;
             --text-light: #CCCCCC;
-            --bg-dark: #121212;
-            --bg-card: #1E1E1E;
-            --bg-darker: #0A0A0A;
+            --bg-dark: #0A0A0A;
+            --bg-card: #1A1A1A;
+            --bg-darker: #050505;
             --border: #333333;
-            --shadow: rgba(0, 0, 0, 0.5);
+            --shadow: rgba(0, 0, 0, 0.7);
             --success: #4CAF50;
             --warning: #FF9800;
             --danger: #F44336;
             --neon-glow: 0 0 10px var(--primary), 0 0 20px var(--primary), 0 0 30px var(--primary);
             --gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            --card-glow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
         
         * {
@@ -44,9 +45,12 @@
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 165, 0, 0.05) 0%, transparent 20%);
         }
         
-        /* Header with neon glow */
+        /* Header with advanced neon glow */
         header {
             background: var(--bg-darker);
             color: var(--text-dark);
@@ -57,6 +61,7 @@
             position: relative;
             overflow: hidden;
             border-bottom: 2px solid var(--primary);
+            background: linear-gradient(145deg, #0a0a0a, #000000);
         }
         
         header::before {
@@ -75,6 +80,7 @@
             font-weight: bold;
             color: var(--primary);
             text-shadow: 0 0 5px var(--primary);
+            letter-spacing: 1px;
         }
         
         .user-info {
@@ -107,15 +113,16 @@
             opacity: 0.8;
         }
         
-        /* Balance cards with neon borders */
+        /* Balance cards with advanced neon borders */
         .balance-section {
             background: var(--bg-card);
             margin: 15px;
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
+            box-shadow: var(--card-glow), 0 4px 15px var(--shadow);
             border: 1px solid var(--border);
             position: relative;
+            overflow: hidden;
         }
         
         .balance-section::before {
@@ -149,9 +156,10 @@
             margin: 15px;
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
+            box-shadow: var(--card-glow), 0 4px 15px var(--shadow);
             border: 1px solid var(--border);
             position: relative;
+            overflow: hidden;
         }
         
         .wallet-section::before {
@@ -180,7 +188,7 @@
             margin-bottom: 15px;
         }
         
-        /* Buttons with neon effects */
+        /* Buttons with advanced neon effects */
         .btn {
             background: var(--gradient);
             color: var(--bg-dark);
@@ -192,10 +200,11 @@
             width: 100%;
             margin: 5px 0;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px var(--shadow);
+            box-shadow: 0 4px 6px var(--shadow), 0 0 10px rgba(255, 215, 0, 0.5);
             position: relative;
             overflow: hidden;
             z-index: 1;
+            letter-spacing: 0.5px;
         }
         
         .btn::before {
@@ -224,8 +233,8 @@
         }
         
         .btn:disabled {
-            background: #555;
-            color: #999;
+            background: #333;
+            color: #666;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -245,14 +254,27 @@
             color: white;
         }
         
-        /* Task cards with glow effects */
+        /* Task cards with advanced glow effects */
         .tasks-section {
             background: var(--bg-card);
             margin: 15px;
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
+            box-shadow: var(--card-glow), 0 4px 15px var(--shadow);
             border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tasks-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            box-shadow: 0 0 10px var(--primary);
         }
         
         .task-card {
@@ -265,6 +287,7 @@
             align-items: center;
             transition: all 0.3s ease;
             border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
         .task-card:hover {
@@ -299,15 +322,17 @@
             background: var(--bg-card);
             padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px var(--shadow);
+            box-shadow: var(--card-glow), 0 4px 10px var(--shadow);
             text-align: center;
             border: 1px solid var(--border);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px var(--shadow);
+            box-shadow: 0 8px 15px var(--shadow), 0 0 10px rgba(255, 215, 0, 0.3);
         }
         
         .stat-value {
@@ -322,7 +347,7 @@
             color: var(--text-light);
         }
         
-        /* Navigation bar with glow */
+        /* Navigation bar with advanced glow */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -338,6 +363,7 @@
             border-radius: 20px 20px 0 0;
             z-index: 100;
             border-top: 1px solid var(--primary);
+            background: linear-gradient(145deg, #0a0a0a, #000000);
         }
         
         .nav-item {
@@ -396,8 +422,21 @@
             margin: 15px;
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
+            box-shadow: var(--card-glow), 0 4px 15px var(--shadow);
             border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .referral-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            box-shadow: 0 0 10px var(--primary);
         }
         
         .referral-link-container {
@@ -417,6 +456,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            color: var(--primary);
         }
         
         .copy-btn {
@@ -442,8 +482,21 @@
             margin: 15px;
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
+            box-shadow: var(--card-glow), 0 4px 15px var(--shadow);
             border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .withdraw-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            box-shadow: 0 0 10px var(--primary);
         }
         
         .form-group {
@@ -464,6 +517,13 @@
             border-radius: 8px;
             background: var(--bg-dark);
             color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 5px var(--primary);
+            outline: none;
         }
         
         .note {
@@ -530,6 +590,19 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             animation: modalAppear 0.3s ease;
             border: 1px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            box-shadow: 0 0 10px var(--primary);
         }
         
         @keyframes modalAppear {
@@ -608,6 +681,7 @@
             margin-bottom: 5px;
             font-size: 1.5rem;
             color: var(--bg-dark);
+            box-shadow: 0 0 10px var(--primary);
         }
         
         /* Verification steps */
@@ -623,6 +697,11 @@
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
         }
         
         .step-icon {
@@ -636,11 +715,13 @@
             background: #333;
             color: #666;
             font-weight: bold;
+            transition: all 0.3s ease;
         }
         
         .step.completed .step-icon {
             background: var(--success);
             color: white;
+            box-shadow: 0 0 5px var(--success);
         }
         
         .step.active .step-icon {
@@ -717,6 +798,7 @@
             cursor: pointer;
             font-size: 0.8rem;
             margin-top: 5px;
+            transition: all 0.3s ease;
         }
         
         .verify-btn:hover {
@@ -735,6 +817,7 @@
             background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
             border: 1px solid var(--primary);
+            box-shadow: 0 0 5px var(--primary);
         }
         
         .countdown-label {
@@ -796,6 +879,7 @@
             padding: 10px;
             background: rgba(255, 217, 0, 0.1);
             border-radius: 8px;
+            border: 1px solid var(--border);
         }
         
         .limit-text {
@@ -817,6 +901,7 @@
             padding: 10px;
             background: rgba(255, 217, 0, 0.1);
             border-radius: 8px;
+            border: 1px solid var(--border);
         }
         
         .ad-text {
@@ -848,6 +933,31 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        
+        /* Pulse animation for balance */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        /* Floating coins animation */
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        .coin {
+            position: absolute;
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: float 1s ease-in-out forwards;
+            z-index: 10;
         }
     </style>
 </head>
@@ -1194,8 +1304,37 @@
         
         // Get Telegram user data
         let tg = window.Telegram.WebApp;
-        let userData = {
-            userId: tg.initDataUnsafe?.user?.id || generateUserId(),
+        
+        // Generate unique user ID
+        function generateUserId() {
+            // Use Telegram user ID if available, otherwise generate a random one
+            if (tg.initDataUnsafe?.user?.id) {
+                return "tg_" + tg.initDataUnsafe.user.id;
+            }
+            
+            // Check if we already have a user ID in localStorage
+            let storedUserId = localStorage.getItem('user_id');
+            if (storedUserId) {
+                return storedUserId;
+            }
+            
+            // Generate new user ID and store it
+            let newUserId = "user_" + Math.floor(10000 + Math.random() * 90000);
+            localStorage.setItem('user_id', newUserId);
+            return newUserId;
+        }
+        
+        // Get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Default user data
+        const defaultUserData = {
+            userId: generateUserId(),
             firstName: tg.initDataUnsafe?.user?.first_name || "User",
             lastName: tg.initDataUnsafe?.user?.last_name || "",
             username: tg.initDataUnsafe?.user?.username || "user",
@@ -1211,25 +1350,15 @@
             referredBy: getUrlParameter('ref') || null,
             verificationStart: null,
             lastAdWatch: null,
-            lastAutoAd: null
+            lastAutoAd: null,
+            lastLogin: new Date().toISOString()
         };
+        
+        let userData = { ...defaultUserData };
         
         // Auto ad timer
         let autoAdTimer = 30;
         let autoAdInterval;
-        
-        // Generate a random user ID if not from Telegram
-        function generateUserId() {
-            return Math.floor(10000 + Math.random() * 90000);
-        }
-        
-        // Get URL parameters
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
         
         // Format time for countdown
         function formatTime(seconds) {
@@ -1303,6 +1432,7 @@
             });
             
             userData.lastAutoAd = Date.now();
+            saveUserData(); // Save the timestamp
         }
         
         // Show rewarded ad - Using exact code provided
@@ -1341,6 +1471,33 @@
                     reject(e);
                 });
             });
+        }
+        
+        // Create floating coins animation
+        function createCoinAnimation() {
+            const container = document.body;
+            const coinCount = 5;
+            
+            for (let i = 0; i < coinCount; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.innerHTML = '<i class="fas fa-coins"></i>';
+                
+                // Random position
+                const left = Math.random() * 80 + 10;
+                coin.style.left = left + '%';
+                coin.style.top = '80%';
+                
+                // Random animation delay
+                coin.style.animationDelay = (Math.random() * 0.5) + 's';
+                
+                container.appendChild(coin);
+                
+                // Remove coin after animation
+                setTimeout(() => {
+                    coin.remove();
+                }, 1000);
+            }
         }
         
         // Initialize the app
@@ -1399,7 +1556,10 @@
                 }
                 
                 // Show rewarded ad using the exact code
-                showRewardedAd().catch(e => {
+                showRewardedAd().then(() => {
+                    // Create coin animation
+                    createCoinAnimation();
+                }).catch(e => {
                     showToast('Ad was not completed or there was an error', 'error');
                     console.error('Ad error:', e);
                 });
@@ -1414,7 +1574,10 @@
                     }
                     
                     // Show rewarded ad using the exact code
-                    showRewardedAd().catch(e => {
+                    showRewardedAd().then(() => {
+                        // Create coin animation
+                        createCoinAnimation();
+                    }).catch(e => {
                         showToast('Ad was not completed or there was an error', 'error');
                         console.error('Ad error:', e);
                     });
@@ -1781,12 +1944,16 @@
         // Save user data to Firebase
         function saveUserData() {
             const userId = userData.userId;
-            database.ref('users/' + userId).set(userData)
+            
+            // Update last login
+            userData.lastLogin = new Date().toISOString();
+            
+            return database.ref('users/' + userId).set(userData)
             .then(() => {
                 console.log('Data saved successfully');
                 
                 // If this user was referred by someone, update the referrer's count
-                if (userData.referredBy) {
+                if (userData.referredBy && !userData.referralProcessed) {
                     database.ref('users/' + userData.referredBy).once('value')
                     .then((snapshot) => {
                         if (snapshot.exists()) {
@@ -1794,7 +1961,15 @@
                             referrerData.referrals += 1;
                             referrerData.walletBalance += 100;
                             referrerData.totalIncome += 100;
+                            
+                            // Mark that we've processed this referral
+                            userData.referralProcessed = true;
+                            
+                            // Save both users
                             database.ref('users/' + userData.referredBy).set(referrerData);
+                            database.ref('users/' + userId).set(userData);
+                            
+                            console.log('Referral bonus added to referrer');
                         }
                     });
                 }
@@ -1807,16 +1982,31 @@
         // Load user data from Firebase
         function loadUserData() {
             const userId = userData.userId;
+            
             database.ref('users/' + userId).once('value')
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     const savedData = snapshot.val();
+                    
+                    // Check if we need to reset daily ads (if it's a new day)
+                    const lastLogin = savedData.lastLogin ? new Date(savedData.lastLogin) : new Date();
+                    const today = new Date();
+                    
+                    // Reset daily ads if it's a new day
+                    if (lastLogin.getDate() !== today.getDate() || 
+                        lastLogin.getMonth() !== today.getMonth() || 
+                        lastLogin.getFullYear() !== today.getFullYear()) {
+                        savedData.todayAds = 0;
+                    }
+                    
                     // Merge saved data with current user data
-                    userData = {...userData, ...savedData};
+                    userData = { ...userData, ...savedData };
                     updateUI();
                 } else {
-                    // Save initial user data
-                    saveUserData();
+                    // New user - save initial data
+                    saveUserData().then(() => {
+                        updateUI();
+                    });
                 }
             })
             .catch((error) => {
