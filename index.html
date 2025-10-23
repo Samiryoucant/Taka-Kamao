@@ -828,6 +828,27 @@
             font-weight: bold;
             color: var(--primary);
         }
+        
+        /* Ad loading indicator */
+        .ad-loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -1096,7 +1117,7 @@
             <button class="btn" id="send-support-btn">Send Message</button>
             
             <div class="note" style="margin-top: 20px;">
-                <strong>Telegram Support:</strong> @QuiXoraSupport
+                <strong>Telegram Support:</strong> samirhossain0916@gmail.com 
             </div>
         </div>
     </div>
@@ -1107,6 +1128,17 @@
             <h3>Success!</h3>
             <p id="success-message">+30.00 TK added to your Earning Wallet.</p>
             <button class="close-btn" id="close-modal-btn">CLOSE</button>
+        </div>
+    </div>
+    
+    <!-- Ad Loading Modal -->
+    <div id="ad-loading-modal" class="modal">
+        <div class="modal-content">
+            <div class="ad-loading">
+                <div class="spinner"></div>
+                <h3>Loading Ad</h3>
+                <p>Please wait while we load the ad...</p>
+            </div>
         </div>
     </div>
     
@@ -1251,14 +1283,14 @@
             document.getElementById('auto-ad-timer').textContent = autoAdTimer + 's';
         }
         
-        // Show auto ad (non-rewarded) - Using the exact code you provided
+        // Show auto ad (non-rewarded) - Using exact code provided
         function showAutoAd() {
             // Don't show auto ads too frequently
             if (userData.lastAutoAd && (Date.now() - userData.lastAutoAd) < 25000) {
                 return;
             }
             
-            // Use the exact in-app interstitial code you provided
+            // Use the exact interstitial code provided
             show_10073083({
                 type: 'inApp',
                 inAppSettings: {
@@ -1271,7 +1303,44 @@
             });
             
             userData.lastAutoAd = Date.now();
-            console.log('Auto ad displayed (0 TK)');
+        }
+        
+        // Show rewarded ad - Using exact code provided
+        function showRewardedAd() {
+            return new Promise((resolve, reject) => {
+                // Show loading modal
+                document.getElementById('ad-loading-modal').style.display = 'flex';
+                
+                // Use the exact rewarded interstitial code provided
+                show_10073083().then(() => {
+                    // Hide loading modal
+                    document.getElementById('ad-loading-modal').style.display = 'none';
+                    
+                    // User watched the ad - REWARD THEM WITH 30 TK
+                    userData.walletBalance += 30;
+                    userData.adsWatched++;
+                    userData.todayAds++;
+                    userData.totalIncome += 30;
+                    userData.lastAdWatch = Date.now();
+                    
+                    updateUI();
+                    
+                    // Show success modal
+                    document.getElementById('success-message').textContent = '+30.00 TK added to your Earning Wallet.';
+                    document.getElementById('success-modal').style.display = 'flex';
+                    
+                    // Save to Firebase
+                    saveUserData();
+                    
+                    resolve();
+                }).catch(e => {
+                    // Hide loading modal
+                    document.getElementById('ad-loading-modal').style.display = 'none';
+                    
+                    // User didn't watch the ad or there was an error
+                    reject(e);
+                });
+            });
         }
         
         // Initialize the app
@@ -1322,38 +1391,21 @@
                 });
             });
             
-            // Watch ad functionality - REWARDED AD (30 TK) - Using the exact code you provided
+            // Watch ad functionality - REWARDED AD (30 TK)
             document.getElementById('watch-ad-btn').addEventListener('click', function() {
                 if (userData.todayAds >= 10) {
                     showToast('Daily ad limit reached! Come back tomorrow.', 'warning');
                     return;
                 }
                 
-                // Use the exact rewarded interstitial code you provided
-                show_10073083().then(() => {
-                    // You need to add your user reward function here
-                    // User watched the ad - REWARD THEM WITH 30 TK
-                    userData.walletBalance += 30;
-                    userData.adsWatched++;
-                    userData.todayAds++;
-                    userData.totalIncome += 30;
-                    userData.lastAdWatch = Date.now();
-                    
-                    updateUI();
-                    
-                    // Show success modal
-                    document.getElementById('success-message').textContent = '+30.00 TK added to your Earning Wallet.';
-                    document.getElementById('success-modal').style.display = 'flex';
-                    
-                    // Save to Firebase
-                    saveUserData();
-                }).catch(e => {
-                    // User didn't watch the ad
-                    showToast('Ad was not completed', 'error');
+                // Show rewarded ad using the exact code
+                showRewardedAd().catch(e => {
+                    showToast('Ad was not completed or there was an error', 'error');
+                    console.error('Ad error:', e);
                 });
             });
             
-            // Task screen watch ad - REWARDED AD (30 TK) - Using the exact code you provided
+            // Task screen watch ad - REWARDED AD (30 TK)
             document.querySelectorAll('.watch-ad-task').forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (userData.todayAds >= 10) {
@@ -1361,27 +1413,10 @@
                         return;
                     }
                     
-                    // Use the exact rewarded interstitial code you provided
-                    show_10073083().then(() => {
-                        // You need to add your user reward function here
-                        // User watched the ad - REWARD THEM WITH 30 TK
-                        userData.walletBalance += 30;
-                        userData.adsWatched++;
-                        userData.todayAds++;
-                        userData.totalIncome += 30;
-                        userData.lastAdWatch = Date.now();
-                        
-                        updateUI();
-                        
-                        // Show success modal
-                        document.getElementById('success-message').textContent = '+30.00 TK added to your Earning Wallet.';
-                        document.getElementById('success-modal').style.display = 'flex';
-                        
-                        // Save to Firebase
-                        saveUserData();
-                    }).catch(e => {
-                        // User didn't watch the ad
-                        showToast('Ad was not completed', 'error');
+                    // Show rewarded ad using the exact code
+                    showRewardedAd().catch(e => {
+                        showToast('Ad was not completed or there was an error', 'error');
+                        console.error('Ad error:', e);
                     });
                 });
             });
